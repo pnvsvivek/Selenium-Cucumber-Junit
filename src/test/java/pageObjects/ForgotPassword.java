@@ -34,7 +34,7 @@ public class ForgotPassword {
 
 	@FindBy(xpath = "//a[@class='submit btn btn-block btn-resend']")
 	public WebElement btn_back;
-	
+
 	@FindBy(xpath = "//input[@class='form-control ng-pristine ng-untouched ng-valid ng-empty']")
 	public WebElement tbx_onetimepwd;
 
@@ -58,6 +58,9 @@ public class ForgotPassword {
 
 	@FindBy(xpath = "//p[(contains(text(),'OTP is invalid or has expired. Please try again.'))]")
 	public WebElement msg_forgotPassword_otp_expired;
+
+	@FindBy(xpath = "//div[@class='popup-msg-container']//self::div[contains(text(),'Password does not meet criteria. Please enter your new password')]")
+	public WebElement msg_forgotPassword_notMatchedCriterion;
 
 	public void forgotPassword(String number, String password, String repeatpassword)
 			throws InterruptedException, IOException {

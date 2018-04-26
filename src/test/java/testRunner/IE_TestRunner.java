@@ -3,6 +3,7 @@ package testRunner;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -13,22 +14,33 @@ import com.github.mkolisnyk.cucumber.runner.ExtendedCucumber;
 
 import cucumber.api.CucumberOptions;
 import reusability.ReusableMethods;
+import reusability.Utilities;
 import steps.Steps;
 
 @RunWith(ExtendedCucumber.class)
-@CucumberOptions(plugin = {"com.cucumber.listener.ExtentCucumberFormatter:"},features = {"src/test/resources/features/Registration.feature"},glue={"steps"},dryRun=false,tags="@RegisterWithInvalidOTP")
+@CucumberOptions(plugin = { "com.cucumber.listener.ExtentCucumberFormatter:" }, features = { "features" }, glue = {
+		"steps" }, dryRun = false, tags = "@Regression")
 public class IE_TestRunner {
-	static{
-		Steps.browser="ie";
+	static {
+		Steps.browser = "IE";
 	}
+
 	@BeforeClass
-	public static void setup() {
+	public static void setup() throws IOException {
 		ReusableMethods res = new ReusableMethods();
+		Utilities util = new Utilities();
 		String tiemStamp = res.newDateText();
-	    ExtentProperties extentProperties = ExtentProperties.INSTANCE;
-	    extentProperties.setReportPath("C:\\Vodacom_Automation_Report\\IE_cucumber-reports\\Vodacom_PCTV_Automation_Report_"+tiemStamp+".html");
+		util.deleteSheet();
+		String reportPath = res.readConfig("IEReport") + tiemStamp + ".html";
+		File file = new File(reportPath);
+		if (!file.exists()) {
+			FileUtils.touch(file);
+		}
+		ExtentProperties extentProperties = ExtentProperties.INSTANCE;
+		extentProperties.setReportPath(reportPath);
+		util.createExcelReport();
 	}
-	
+
 	@AfterClass
 	public static void endTests() throws IOException {
 		Reporter.loadXMLConfig(new File("extent-config.xml"));

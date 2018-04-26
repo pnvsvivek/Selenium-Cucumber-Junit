@@ -1,6 +1,7 @@
 package pageObjects;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.WebDriver;
@@ -31,7 +32,7 @@ public class UserProfile {
 	@FindBy(xpath = "//input[@name='surname']")
 	public WebElement txt_Surname;
 
-	@FindBy(xpath = "//input[@placeholder='Phone Number']")
+	@FindBy(xpath = "//input[@placeholder='Cellphone number']")
 	public WebElement txt_Phone_Number;
 
 	@FindBy(xpath = "//button[@name='confirm']")
@@ -58,40 +59,53 @@ public class UserProfile {
 	@FindBy(xpath = "//*[contains(text(),'Update Personal Data & Password')]")
 	public WebElement link_update_personal_data_and_password;
 
-	@FindBy(xpath = "//p[contains(text(),'Congratulation! Your password has been changed')]")
+	@FindBy(xpath = "//p[contains(text(),'Congratulations! Your password has been changed')]")
 	public WebElement txt_suceesful_change;
-	
-	@FindBy(xpath = "//span[contains(@class,'errormsg-lastrow')]")
+
+	@FindBy(xpath = "//div[@class='form-error']")
 	public WebElement txt_mimatch_password;
-	
-	@FindBy(xpath = "//span[contains(@class,'errormsg-large ng-scope')]")
+
+	@FindBy(xpath = "//div[@class='form-error']")
 	public WebElement txt_notComplex_password;
-	
+
 	@FindBy(xpath = "//div[@class='widget servaccpages subscription-details ng-scope']")
 	public WebElement tbl_subscription_details;
-	
+
 	@FindBy(xpath = "//p[@class='mb-4 ng-scope']")
 	public WebElement lbl_no_subscriptions;
-	
+
 	@FindBy(xpath = "//span[@class='ng-scope']//self::span[contains(text(),'Current Subscriptions')]")
 	public WebElement lnk_current_subscriptions;
-	
+
 	@FindBy(xpath = "//a[@class='vodacom-link']//self::a[contains(text(),'Unsubscribe')]")
 	public WebElement lnk_unsubscribe;
-	
+
 	@FindBy(xpath = "//p[@class='generic-p-popup ng-binding ng-scope']")
 	public WebElement msg_popup_unsubscribe;
-	
+
 	@FindBy(xpath = "//a[@class='btn btn-ctl btn-sign-in ng-binding']")
 	public WebElement btn_popup_unsubscribe_close;
-	
-	
+
+	@FindBy(xpath = "//div[@class='ng-modal-body ng-scope']//p[@class='ng-binding ng-scope']")
+	public WebElement msg_changeUser;
+
+	@FindBy(xpath = "//a[@class='btn btn-ctl btn-sign-up']//self::a[contains(text(),'Close')]")
+	public WebElement msg_changeUser_Close;
+
+	@FindBy(xpath = "//a[contains(@class,'btn btn-ctl btn-sign-in')]//self::a[contains(text(),'OK')]")
+	public List<WebElement> list_btn_Ok;
+
+	@FindBy(xpath = "//button[contains(@class,'btn btn-sign-in')]")
+	public List<WebElement> list_btn_LogIn;
+
 	public void updateNewPassword(WebDriver driver, String password, String newPassword)
 			throws InterruptedException, IOException {
 		ReusableMethods res = new ReusableMethods();
-		// Utilities util = new Utilities();
-		res.wait(driver).until(ExpectedConditions.elementToBeClickable(btn_Update_Personal_Data));
-		btn_Update_Personal_Data.click();
+		/*
+		 * Utilities util = new Utilities();
+		 * res.wait(driver).until(ExpectedConditions.elementToBeClickable(
+		 * btn_Update_Personal_Data)); btn_Update_Personal_Data.click();
+		 */
 		driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
 		txt_Old_Password.sendKeys(password);
 		Thread.sleep(1000);
@@ -116,8 +130,10 @@ public class UserProfile {
 		Thread.sleep(1000);
 		Reporter.addScreenCaptureFromPath(util.screenCapture(driver));
 		Thread.sleep(1000);
+		txt_Firstname.clear();
 		txt_Firstname.sendKeys(Firstname);
 		Thread.sleep(1000);
+		txt_Surname.clear();
 		txt_Surname.sendKeys(Surname);
 		txt_Phone_Number.clear();
 		Thread.sleep(1000);
@@ -127,7 +143,7 @@ public class UserProfile {
 		res.clickUsingJavascriptExecutor(driver, btn_Change);
 		Thread.sleep(1000);
 	}
-	
+
 	public void passwordMismatch(WebDriver driver, String password, String newPassword1, String newPassword2)
 			throws InterruptedException, IOException {
 		// ReusableMethods res = new ReusableMethods();
@@ -144,10 +160,8 @@ public class UserProfile {
 		res.clickUsingJavascriptExecutor(driver, btn_Confirm);
 		Thread.sleep(1000);
 	}
-	
-	public void clickOnCurrentSubscriptions()
-	{
+
+	public void clickOnCurrentSubscriptions() {
 		lnk_current_subscriptions.click();
 	}
 }
-
