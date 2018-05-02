@@ -2,11 +2,13 @@ package reusability;
 
 import static io.restassured.RestAssured.given;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -19,6 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -68,7 +76,7 @@ public class Utilities {
 		return response;
 	}
 
-	public String screenCapture(WebDriver driver) {
+	public String screenCapture(WebDriver driver) throws IOException {
 		/*
 		 * SimpleDateFormat sdf = new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss");
 		 * String name = sdf.format(new Date()); String destPath =
@@ -78,12 +86,35 @@ public class Utilities {
 		 * FileUtils.touch(destFile); } FileUtils.copyFile(scrFile, destFile);
 		 * return destPath;
 		 */
+
 		File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+		BufferedImage src = ImageIO.read(scrFile);
+		BufferedImage convertedImg = new BufferedImage(src.getWidth(), src.getHeight(), BufferedImage.TYPE_INT_RGB);
+		convertedImg.getGraphics().drawImage(src, 0, 0, null);
+
+		File output = new File("compressed.jpeg");
+		OutputStream out = new FileOutputStream(output);
+
+		ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+		ImageOutputStream ios = ImageIO.createImageOutputStream(out);
+		writer.setOutput(ios);
+
+		ImageWriteParam param = writer.getDefaultWriteParam();
+		if (param.canWriteCompressed()) {
+			param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+			param.setCompressionQuality(0.5f);
+		}
+
+		writer.write(null, new IIOImage(convertedImg, null, null), param);
+
+		out.close();
+		ios.close();
+		writer.dispose();
 		String encodedBase64 = null;
 		FileInputStream fileInputStreamReader = null;
 		try {
-			fileInputStreamReader = new FileInputStream(scrFile);
-			byte[] bytes = new byte[(int) scrFile.length()];
+			fileInputStreamReader = new FileInputStream(output);
+			byte[] bytes = new byte[(int) output.length()];
 			fileInputStreamReader.read(bytes);
 			encodedBase64 = new String(Base64.getEncoder().encode(bytes));
 		} catch (FileNotFoundException e) {
@@ -91,7 +122,8 @@ public class Utilities {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return "data:image/png;base64," + encodedBase64;
+
+		return "data:image/dib;base64," + encodedBase64;
 	}
 
 	public static HashMap<String, String> readDB(String JDBC_Driver, String DB_Url, String username, String password,
