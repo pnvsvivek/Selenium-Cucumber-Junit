@@ -22,7 +22,9 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
+/**
+This is reusable methods class
+ */
 public class ReusableMethods {
 
 	File file = new File("e2e_config.properties");
