@@ -24,7 +24,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 /**
 This is reusable methods class
- */
+Git branch checkout
+ **/
 public class ReusableMethods {
 
 	File file = new File("e2e_config.properties");
